@@ -50,24 +50,24 @@ from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.cluster import KMeans
 from sklearn.cluster import AgglomerativeClustering
 
-data = pd.read_csv("Dataset1.csv")
+data = pd.read_csv("Dataset2.csv")
 data = data.drop('dateandtime', 1)
 cols = data.columns
 data = data.replace(' ', np.nan)
 data = data.dropna()
 
 
-for i in range(3):
-    data[cols[i]] = data[cols[i]].astype(float)
-data[cols[3]] = data[cols[3]].astype(int)
-
-data1 = data[['N', 'EGT', 'WF']].values
-label = data['Status'].values
-
-scaler = StandardScaler()
-data = scaler.fit_transform(data1)
-
-x_train, x_test, y_train, y_test = train_test_split(data, label, test_size=0.3, random_state=42)
+# for i in range(3):
+#     data[cols[i]] = data[cols[i]].astype(float)
+# data[cols[3]] = data[cols[3]].astype(int)
+#
+# data1 = data[['N', 'EGT', 'WF']].values
+# label = data['Status'].values
+#
+# scaler = StandardScaler()
+# data = scaler.fit_transform(data1)
+#
+# x_train, x_test, y_train, y_test = train_test_split(data, label, test_size=0.3, random_state=42)
 
 
 # neigh = KNeighborsClassifier(n_neighbors = 5)  # 5 better result than most  <5 i think would overfit...
@@ -130,12 +130,13 @@ x_train, x_test, y_train, y_test = train_test_split(data, label, test_size=0.3, 
 
 
 ##AgglomerativeClustering
-kmeans = AgglomerativeClustering(n_clusters=3, linkage='average', affinity='cosine')
-y_means = kmeans.fit_predict(data)
-# print(y_means)
-unique, counts = np.unique(y_means, return_counts=True)
-print(dict(zip(unique, counts)))
-print ("accur sc (agglomerative): ",accuracy_score(label, y_means))
+# kmeans = AgglomerativeClustering(n_clusters=3, linkage='average', affinity='cosine')
+# y_means = kmeans.fit_predict(data)
+# # print(y_means)
+# unique, counts = np.unique(y_means, return_counts=True)
+# print(dict(zip(unique, counts)))
+# print ("accur sc (agglomerative): ",accuracy_score(label, y_means))
+
 
 
 # plt.scatter(data[y_means==0, 1], data[y_means==0, 2], s=50, c='red', label='Cluster1')
