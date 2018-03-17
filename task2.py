@@ -15,7 +15,7 @@ from sklearn import tree
 from sklearn import preprocessing
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression, LinearRegression
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
 from sklearn import svm
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
@@ -45,52 +45,82 @@ from sklearn.svm import LinearSVC
 from sklearn.ensemble import ExtraTreesClassifier
 
 from sklearn.feature_selection import SelectFromModel
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVR
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.cluster import KMeans
 from sklearn.cluster import AgglomerativeClustering
 
 data = pd.read_csv("Dataset2.csv")
-data = data.drop('dateandtime', 1)
+data = data.drop(data.columns[[0, 4, 6]], 1) # removing (dateandtime, Astana, Oskemen)
+data = data.dropna() #removing NaN records
+shape = data.shape #after removing NaN records
+
 cols = data.columns
-data = data.replace(' ', np.nan)
-data = data.dropna()
+for i in range(shape[1]):
+    data[cols[i]] = data[cols[i]].astype(float)
 
+def heatmap(fulldata,figsize=(25,25),annot_size = 8,cmap=sns.cubehelix_palette(start = 0.2,rot = 0.3,dark = 0.15,light = 0.85,as_cmap = True)):
+    corr = fulldata.corr()
+    _,ax = plt.subplots(1,1,figsize=figsize)
+    sns.heatmap(corr,
+    cbar=True,
+    cbar_kws={'shrink':0.9},
+    annot=True,
+    annot_kws={'fontsize':annot_size},
+    cmap = cmap
+    )
+    plt.show()
+# heatmap(data)
 
-# for i in range(3):
-#     data[cols[i]] = data[cols[i]].astype(float)
-# data[cols[3]] = data[cols[3]].astype(int)
-#
-# data1 = data[['N', 'EGT', 'WF']].values
-# label = data['Status'].values
-#
+# data = data.drop(data.columns[[3]], 1) # removing Atyrau because correlation is very low -0.24
+
+data1 = data[['Almaty', 'Kyzylorda', 'Atyrau']].values
+data_kyz = data['Kyzylorda'].values
+data_alm = data['Almaty'].values
+label = data['Gas_Flow'].values
+# plt.subplot(211)
+# plt.scatter(data_alm, label, c='red', alpha=0.5)
+# plt.subplot(212)
+# plt.scatter(data_kyz, label, c='blue', alpha=0.58)
+# plt.show()
+
+# data_kyz = data_kyz.reshape(-1, 1)
+data_alm = data_alm.reshape(-1, 1)
 # scaler = StandardScaler()
-# data = scaler.fit_transform(data1)
-#
-# x_train, x_test, y_train, y_test = train_test_split(data, label, test_size=0.3, random_state=42)
+# data1 = scaler.fit_transform(data1)
+
+x_train, x_test, y_train, y_test = train_test_split(data_alm, label, test_size=0.2, random_state=42)
 
 
-# neigh = KNeighborsClassifier(n_neighbors = 5)  # 5 better result than most  <5 i think would overfit...
-# neigh.fit(x_train, y_train)
-# predicted = neigh.predict(x_test)
+log_reg = LogisticRegression()
+log_reg.fit(x_train, y_train)
+predicted = regr.predict(x_test)
+# print('regression coef: ', log_reg.coef_)
+print("mean squeared error: ", mean_squared_error(y_test, predicted))
+
+# svm_reg = SVR(kernel='rbf', C=1.00)
+# svm_reg.fit(x_train, y_train)
+# predicted = svm_reg.predict(x_test)
 # print ("accur sc: ",accuracy_score(y_test, predicted))
 # # print(average_precision_score(y_test, test_data))
 # print ("class_rep: ", classification_report(y_test, predicted))
-#
-#
-# clf = tree.DecisionTreeClassifier()
-# clf.fit(x_train, y_train)
-# predicted = clf.predict(x_test)
-# print ("accur sc: ",accuracy_score(y_test, predicted))
-# # print(average_precision_score(y_test, test_data))
-# print ("class_rep: ", classification_report(y_test, predicted))
-#
-# rand_for = RandomForestClassifier(random_state = 0, n_estimators = 10, min_samples_split = 6, min_samples_leaf = 2)
+
+
+# rand_for = RandomForestRegressor()
 # rand_for.fit(x_train, y_train)
+# print(rand_for.feature_importances_) # feature importances by cities
+
 # predicted = rand_for.predict(x_test)
-# print ("accur sc: ",accuracy_score(y_test, predicted))
-# # print(average_precision_score(y_test, test_data))
-# print ("class_rep: ", classification_report(y_test, predicted))
+# print("mean squeared error: ", mean_squared_error(y_test, predicted))
+
+
+# regr = LinearRegression()
+# regr.fit(x_train, y_train)
+# predicted = regr.predict(x_test)
+# print('regression coef: ', regr.coef_)
+# print("mean squeared error: ", mean_squared_error(y_test, predicted))
+
+
 
 # crange=list(range(1//10, 2, 0.1))
 # acc_score=[]
