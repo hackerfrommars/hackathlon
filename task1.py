@@ -48,6 +48,7 @@ from sklearn.feature_selection import SelectFromModel
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.cluster import KMeans
+from sklearn.cluster import AgglomerativeClustering
 
 data = pd.read_csv("Dataset1.csv")
 data = data.drop('dateandtime', 1)
@@ -124,14 +125,20 @@ x_train, x_test, y_train, y_test = train_test_split(data, label, test_size=0.3, 
 
 
 
-kmeans = KMeans(n_clusters=3, init='k-means++', max_iter=100, random_state=0)
+# kmeans = KMeans(n_clusters=3, init='k-means++', max_iter=100, random_state=0)
+# y_means = kmeans.fit_predict(data)
+
+
+##AgglomerativeClustering
+kmeans = AgglomerativeClustering(n_clusters=3, linkage='complete', affinity='euclidean')
 y_means = kmeans.fit_predict(data)
+
 
 plt.scatter(data[y_means==0, 1], data[y_means==0, 2], s=50, c='red', label='Cluster1')
 plt.scatter(data[y_means==1, 1], data[y_means==1, 2], s=50, c='blue', label='Cluster2')
 plt.scatter(data[y_means==2, 1], data[y_means==2, 2], s=50, c='cyan', label='Cluster3')
 
-plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=70, c='yellow', label='centroids')
+# plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=70, c='yellow', label='centroids')
 plt.title('clusters of materials')
 plt.legend()
 plt.show()
